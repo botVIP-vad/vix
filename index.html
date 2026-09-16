@@ -184,6 +184,9 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
 
 
 .powered-by{position:fixed;top:10px;left:10px;z-index:9999;color:var(--muted);font-size:9px;font-weight:600;pointer-events:none;opacity:.6}
+.chat-status{position:fixed;top:34px;left:10px;z-index:9999;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.5px;pointer-events:none;opacity:.85}
+.chat-status.ok{color:#a970ff}
+.chat-status.err{color:#f87171}
 .powered-by span{color:var(--muted);font-weight:600}
 .statistics-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:10000}
 .statistics-modal.show{display:flex}
@@ -240,6 +243,7 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
 </style>
 </head>
 <body>
+<div class="chat-status" id="chatStatus">ЧАТ: ПОДКЛЮЧЕНИЕ...</div>
 <div class="powered-by">Powered by: <span>@vadymtm90</span></div>
 <div class="password-modal" id="passwordModal">
   <div class="password-box">
@@ -675,7 +679,7 @@ function renderChatMessage(user,msg,time,id,badgesStr,color){
   if(chatMessages.length>MAX_CHAT_MSGS)chatMessages.shift();
   renderChatOverlay();
 }
-function displayTimer(){var m=Math.floor(timerSeconds/60);var s=timerSeconds%60;document.getElementById('timeDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');var origTotal=window._origTotal||60;var elapsed=origTotal-timerSeconds;var progress=origTotal>0?elapsed/origTotal:0;document.getElementById('circleProgress').style.strokeDashoffset=MAX_DASH*(1-progress);}
+function displayTimer(){var el=document.getElementById('timeDisplay');if(!el)return;var m=Math.floor(timerSeconds/60);var s=timerSeconds%60;el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');var origTotal=window._origTotal||60;var elapsed=origTotal-timerSeconds;var progress=origTotal>0?elapsed/origTotal:0;var cp=document.getElementById('circleProgress');if(cp)cp.style.strokeDashoffset=MAX_DASH*(1-progress);}
 function adjustTime(sec){timerSeconds=Math.max(0,timerSeconds+sec);window._origTotal=timerSeconds>0?timerSeconds:60;displayTimer();}
 function startTimer(){if(timerRunning)return;timerRunning=true;document.getElementById('btnStart').classList.add('active');document.getElementById('btnPause').classList.remove('active');window._origTotal=timerSeconds>0?timerSeconds:60;timerInterval=setInterval(function(){if(timerSeconds>0){timerSeconds--;displayTimer();}else{pauseTimer();document.getElementById('timeLabel').textContent='Финиш';document.getElementById('timeLabel').classList.add('finish');}},1000);}
 function pauseTimer(){timerRunning=false;clearInterval(timerInterval);document.getElementById('btnStart').classList.remove('active');document.getElementById('btnPause').classList.add('active');}
@@ -967,10 +971,18 @@ function renderBadgesHtml(badgesStr){
   return out;
 }
 
+function chatStatus(txt,cls){
+  var el=document.getElementById('chatStatus');
+  if(el){el.textContent='ЧАТ: '+txt;el.className='chat-status'+(cls?' '+cls:'');}
+  console.log('[CHAT]',txt);
+}
+
 function connect(){
   if(sock)try{sock.close()}catch(e){}
+  chatStatus('ПОДКЛЮЧЕНИЕ...');
   sock=new WebSocket('wss://irc-ws.chat.twitch.tv:443');
   sock.onopen=function(){
+    chatStatus('СОКЕТ ОТКРЫТ, АВТОРИЗАЦИЯ...');
     sock.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
     sock.send('PASS SCHMOOPIIE');
     sock.send('NICK justinfan12345');
@@ -982,8 +994,23 @@ function connect(){
 
     // 001 — регистрация прошла, только теперь можно JOIN (иначе Twitch отклоняет JOIN)
     if(d.indexOf(' 001 ')>=0){
-      sock.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+      chatStatus('АВТОРИЗОВАН, ЗАХОЖУ В #'+CH.toLowerCase(),'ok');
       sock.send('JOIN #'+CH.toLowerCase());
+      return;
+    }
+
+    // NOTICE — ошибка от Twitch (логин/канал и т.п.)
+    if(d.indexOf(' NOTICE ')>=0){
+      chatStatus('NOTICE: '+d.split(' NOTICE ')[1],'err');
+      return;
+    }
+
+    // RECONNECT — сервер просит переподключиться
+    if(d.indexOf(' RECONNECT ')>=0){try{sock.close()}catch(e){}return;}
+
+    // JOIN подтверждён
+    if(d.indexOf(' JOIN #')>=0&&d.indexOf('justinfan')>=0){
+      chatStatus('В ЧАТЕ #'+CH.toLowerCase()+' ✓','ok');
       return;
     }
 
@@ -1078,7 +1105,8 @@ function connect(){
     }
     winnerMessages.push({user:user,msg:msg,isWinner:currentWinner&&user.toLowerCase()===currentWinner.toLowerCase()});
   };
-  sock.onclose=function(){setTimeout(connect,5000);};
+  sock.onclose=function(){chatStatus('ОТКЛЮЧЕН, ПЕРЕПОДКЛЮЧЕНИЕ ЧЕРЕЗ 3с','err');setTimeout(connect,3000);};
+  sock.onerror=function(){chatStatus('ОШИБКА СОКЕТА','err');};
 }
 
 var f=document.getElementById('twitch-chat-frame');
