@@ -28,9 +28,9 @@ html,body{margin:0;height:100%;padding:0;background:#0e0e10;color:var(--text);fo
 .winner-pick-btn{margin-top:4px;padding:12px;border-radius:10px;background:var(--accent);color:#0e0e10;font-weight:900;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s;border:none;box-shadow:0 0 20px rgba(145,70,255,.4)}
 .winner-pick-btn:hover{background:#a970ff;box-shadow:0 0 30px rgba(145,70,255,.6)}
 .winner-pick-btn:disabled{opacity:.5;cursor:not-allowed}
-.last-winners{margin-top:6px;display:flex;flex-direction:column;gap:6px}
+.last-winners{position:fixed;top:402px;bottom:22px;left:22px;z-index:49;width:340px;display:flex;flex-direction:column;gap:6px;background:rgba(24,24,27,.55);backdrop-filter:blur(10px);border:1px solid rgba(145,70,255,.2);border-radius:12px;padding:12px;box-shadow:0 10px 34px rgba(0,0,0,.35)}
 .last-winners h4{margin:0;color:var(--accent);font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;text-align:center}
-.last-winners-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;background:rgba(0,0,0,.2);border-radius:8px;padding:6px}
+.last-winners-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;background:rgba(0,0,0,.2);border-radius:8px;padding:6px;max-height:none}
 .last-winners-list::-webkit-scrollbar{width:5px}
 .last-winners-list::-webkit-scrollbar-thumb{background:var(--accent);border-radius:8px}
 .last-winners-list::-webkit-scrollbar-track{background:rgba(145,70,255,.08);border-radius:8px}
@@ -42,7 +42,7 @@ html,body{margin:0;height:100%;padding:0;background:#0e0e10;color:var(--text);fo
 .parts-count:hover{border-color:var(--accent);background:rgba(145,70,255,.08)}
 .pc-label{color:#adadb8;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
 .pc-num{color:var(--accent);font-size:26px;font-weight:900;text-shadow:0 0 15px rgba(145,70,255,.4);line-height:1.2}
-.middle-hint{position:fixed;top:50%;left:395px;right:calc(50vw + 24px);transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;pointer-events:none;background:rgba(14,14,16,.82);backdrop-filter:blur(10px);border:2px solid rgba(145,70,255,.5);border-radius:16px;padding:26px 30px;box-shadow:0 10px 40px rgba(0,0,0,.55),0 0 30px rgba(145,70,255,.2)}
+.middle-hint{position:fixed;top:110px;bottom:22px;left:395px;right:calc(50vw + 24px);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;pointer-events:none;background:rgba(14,14,16,.82);backdrop-filter:blur(10px);border:2px solid rgba(145,70,255,.5);border-radius:16px;padding:26px 30px;box-shadow:0 10px 40px rgba(0,0,0,.55),0 0 30px rgba(145,70,255,.2)}
 .middle-hint::before{content:'';position:absolute;inset:0;border-radius:14px;padding:2px;background:linear-gradient(135deg,rgba(145,70,255,.6),transparent 50%,rgba(145,70,255,.25));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .middle-hint span.hint-main{font-size:18px;font-weight:800;color:#efeff1;line-height:1.5}
 .middle-hint span.hint-code{font-size:20px;font-weight:800;color:#adadb8;letter-spacing:3px}
@@ -209,7 +209,7 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
 #reroll-counter-display{color:var(--accent);font-size:11px;font-weight:bold;margin-top:3px}
 #win-timer-label{border:1px solid rgba(145,70,255,.3);padding:6px 14px;border-radius:14px;color:var(--accent);font-size:16px;font-family:'Orbitron',monospace;flex-shrink:0;background:rgba(145,70,255,.05)}
 #win-timer-label.timer-responded{color:#bf94ff;background:rgba(145,70,255,.2);border-color:rgba(145,70,255,.4);box-shadow:0 0 25px rgba(145,70,255,.5)}
-.win-grid{display:grid;grid-template-columns:1fr 1fr 220px;gap:10px;flex-grow:1;margin-top:10px;overflow:hidden}
+.win-grid{display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:10px;flex-grow:1;margin-top:10px;overflow:hidden}
 .win-card{background:rgba(22,38,29,.8);border:1px solid rgba(145,70,255,.12);border-radius:18px;padding:10px;display:flex;flex-direction:column;overflow:hidden}
 .win-card h4{margin-top:0;color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:1px}
 #win-chat-history{overflow-y:auto;flex-grow:1;font-size:11px;min-height:0;max-height:110px}
@@ -229,6 +229,8 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
 #win-drop-history::-webkit-scrollbar-thumb{background:var(--accent);border-radius:8px}
 #win-drop-history::-webkit-scrollbar-track{background:rgba(145,70,255,.05);border-radius:8px}
 #win-drop-history .hist-row{display:flex;flex-direction:column;border-bottom:1px solid rgba(145,70,255,.05);padding:4px 0}
+.win-actions{display:flex;gap:8px}
+.win-actions .reset{flex:1;margin:0}
 .win-form{background:rgba(22,38,29,.6);border:1px solid rgba(145,70,255,.12);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:5px}
 .win-form h3{margin:0;color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:1px;text-align:center}
 .win-form input{padding:5px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(145,70,255,.2);color:var(--text);font-size:11px;outline:none;transition:.2s}
@@ -290,10 +292,11 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
     <span class="pc-label">УЧАСТНИКИ</span>
     <span class="pc-num" id="partsCount">0</span>
   </div>
-  <div class="last-winners">
-    <h4>ПОСЛЕДНИЕ ПОБЕДИТЕЛИ</h4>
-    <div class="last-winners-list" id="lastWinnersList"></div>
-  </div>
+</div>
+
+<div class="last-winners">
+  <h4>ПОСЛЕДНИЕ ПОБЕДИТЕЛИ</h4>
+  <div class="last-winners-list" id="lastWinnersList"></div>
 </div>
   <div class="middle-hint" id="middleHint">+ в чат для участия в прокачке</div>
   <div class="frame-wrap">
@@ -370,7 +373,6 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
     <div class="win-header-block">
       <div class="win-header-center">
         <img id="win-avatar" class="win-avatar" alt="" onerror="this.style.display='none'">
-        <span id="win-status-label">WINNER FOUND</span>
         <h2 id="win-nick">---</h2>
         <div id="reroll-counter-display">Рероллов: 0</div>
       </div>
@@ -383,29 +385,12 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
       </div>
       <div id="win-stat-card" class="win-card">
         <h4>История игрока (Global):</h4>
-        <div class="win-stats-row">
-          <div class="win-stat-item"><small>Выигрышей:</small> <div id="win-count-stat" class="editable-stat" onclick="editWinnerCounter('count')">0</div></div>
-          <div class="win-stat-item"><small>Всего вывел:</small> <div id="win-sum-stat" class="editable-stat" onclick="editWinnerCounter('sum')">0 ₽</div></div>
-        </div>
-        <div class="win-stat-item"><small>Всего депозитов:</small> <div id="win-dep-stat" class="editable-stat" onclick="editWinnerCounter('dep')">0 ₽</div></div>
         <div id="win-drop-history"></div>
       </div>
-      <div class="win-form">
-        <h3>Записать результат</h3>
-        <input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)">
-        <input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)">
-        <input type="text" id="win-tg-input" placeholder="Telegram @username">
-        <select id="win-site-input">
-          <option value="---">Сайт</option>
-          <option value="MagicDrop">MagicDrop</option>
-          <option value="DastSkin">DastSkin</option>
-          <option value="VirusDrop">VirusDrop</option>
-          <option value="PokeDrop">PokeDrop</option>
-        </select>
-        <button class="pbtn" onclick="saveWinnerStats()" style="margin-top:10px">СОХРАНИТЬ 📊</button>
-        <button class="reset" onclick="closeWinnerScreen()">ЗАКРЫТЬ</button>
-        <button class="reset" style="background:rgba(245,158,11,0.15);border-color:#f59e0b;color:#f59e0b;" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
-      </div>
+    </div>
+    <div class="win-actions">
+      <button class="reset" onclick="closeWinnerScreen()">ЗАКРЫТЬ</button>
+      <button class="reset" style="background:rgba(245,158,11,0.15);border-color:#f59e0b;color:#f59e0b;" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
     </div>
   </div>
 </div>
@@ -806,28 +791,14 @@ function showWinner(name){
   winnerMessages=[];
   var winNick=document.getElementById('win-nick');
   var timerLabel=document.getElementById('win-timer-label');
-  var statusLabel=document.getElementById('win-status-label');
   var avatar=document.getElementById('win-avatar');
   if(avatar){avatar.style.display='block';avatar.src='https://decapi.me/twitch/avatar/'+encodeURIComponent(name);}
   winNick.classList.remove('winner-responded');
   timerLabel.classList.remove('timer-responded');
   timerLabel.innerText='00:00:00';
-  statusLabel.classList.remove('winner-responded');
-  statusLabel.style.color='var(--accent)';
-  statusLabel.innerText='WINNER FOUND';
   winNick.innerText=name;
   document.getElementById('reroll-counter-display').innerText='Рероллов: '+rerollCount;
-  var userHistory=winnerHistory[name.toLowerCase()]||[];
-  var totalWon=userHistory.reduce(function(s,h){return s+(h.amount||0)},0);
-  var totalDep=userHistory.reduce(function(s,h){return s+(h.deposit||0)},0);
-  document.getElementById('win-count-stat').innerText=userHistory.length;
-  document.getElementById('win-sum-stat').innerText=totalWon.toLocaleString()+' ₽';
-  document.getElementById('win-dep-stat').innerText=totalDep.toLocaleString()+' ₽';
   renderWinnerHistory(name);
-  document.getElementById('win-amount-input').value='';
-  document.getElementById('win-deposit-input').value='';
-  document.getElementById('win-tg-input').value='';
-  document.getElementById('win-site-input').value='---';
   document.getElementById('winner-screen').classList.add('open');
   var hCont=document.getElementById('win-chat-history');
   hCont.innerHTML=(userMessages[name]||[]).map(function(m){return'<div style="padding:5px 0;border-bottom:1px solid rgba(145,70,255,.05);font-size:12px;"><small style="color:var(--muted);">'+m.time+'</small> '+esc(m.text)+'</div>';}).reverse().join('');
@@ -853,31 +824,6 @@ function renderWinnerHistory(name){
   }).join('')||'<div style="color:var(--muted);text-align:center;margin-top:20px;">Первая победа!</div>';
 }
 
-function saveWinnerStats(){
-  var amt=parseFloat(document.getElementById('win-amount-input').value)||0;
-  var dep=parseFloat(document.getElementById('win-deposit-input').value)||0;
-  var tg=document.getElementById('win-tg-input').value.trim();
-  if(amt>0||dep>0){
-    var key=currentWinner.toLowerCase();
-    if(!winnerHistory[key])winnerHistory[key]=[];
-    var site=document.getElementById('win-site-input').value||'---';
-    winnerHistory[key].push({amount:amt,deposit:dep,tg:tg,site:site,date:new Date().toLocaleDateString('ru-RU')+' '+new Date().toLocaleTimeString('ru-RU')});
-    try{localStorage.setItem('bib4ek_winner_history',JSON.stringify(winnerHistory));}catch(e){}
-    renderLeaderboard();
-    renderLastWinners();
-  }
-  if(currentSession){
-    var elapsed=Date.now()-currentSession.startTime;
-    var mins=Math.floor(elapsed/60000);
-    var secs=Math.floor((elapsed%60000)/1000);
-    currentSession.time=String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');
-    currentSession.messages=winnerMessages;
-    statistics.unshift(currentSession);
-    localStorage.setItem('bib4ek_stats',JSON.stringify(statistics));
-  }
-  closeWinnerScreen();
-}
-
 function reSpinToHome(){
   rerollCount++;
   if(currentWinner){
@@ -889,15 +835,6 @@ function reSpinToHome(){
   var arr=Array.from(parts);
   if(arr.length===0){closeWinnerScreen();return;}
   showWinner(arr[Math.floor(Math.random()*arr.length)]);
-}
-
-function editWinnerCounter(type){
-  if(!currentWinner)return;
-  var val=prompt('Введите новое значение:');
-  if(val===null)return;
-  if(type==='count')document.getElementById('win-count-stat').innerText=val;
-  if(type==='sum')document.getElementById('win-sum-stat').innerText=parseInt(val).toLocaleString()+' ₽';
-  if(type==='dep')document.getElementById('win-dep-stat').innerText=parseInt(val).toLocaleString()+' ₽';
 }
 
 function closeWinnerScreen(){
@@ -1058,11 +995,8 @@ function connect(){
       if(winTimerActive){
         winTimerActive=false;
         var timerLabel=document.getElementById('win-timer-label');
-        var statusLabel=document.getElementById('win-status-label');
         var nick=document.getElementById('win-nick');
         timerLabel.classList.add('timer-responded');
-        statusLabel.innerText='Победитель ответил';
-        statusLabel.classList.add('winner-responded');
         nick.classList.add('winner-responded');
       }
       var winnerScreen=document.getElementById('winner-screen');
