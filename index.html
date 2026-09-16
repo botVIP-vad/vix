@@ -42,6 +42,9 @@ html,body{margin:0;height:100%;padding:0;background:#0e0e10;color:var(--text);fo
 .parts-count:hover{border-color:var(--accent);background:rgba(145,70,255,.08)}
 .pc-label{color:#adadb8;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
 .pc-num{color:var(--accent);font-size:26px;font-weight:900;text-shadow:0 0 15px rgba(145,70,255,.4);line-height:1.2}
+.middle-hint{position:fixed;top:50%;left:395px;right:calc(50vw + 24px);transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;pointer-events:none}
+.middle-hint span.hint-main{font-size:22px;font-weight:900;color:#efeff1;text-shadow:0 0 20px rgba(0,0,0,.8)}
+.middle-hint span.hint-code{font-size:30px;font-weight:900;color:var(--accent);text-shadow:0 0 25px rgba(145,70,255,.6);letter-spacing:2px}
 .pick-btn:hover{background:rgba(145,70,255,.15);border-color:var(--accent)}
 #winnersPick{width:52px;padding:5px;border-radius:8px;background:rgba(0,0,0,.22);color:var(--accent);font-size:18px;font-weight:900;text-align:center;outline:none;transition:.2s;border:1px solid rgba(145,70,255,.3);-moz-appearance:textfield}
 #winnersPick::-webkit-inner-spin-button,#winnersPick::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -288,6 +291,7 @@ iframe{width:100%;height:100%;display:block;border:0;background:#0e0e10;opacity:
     <div class="last-winners-list" id="lastWinnersList"></div>
   </div>
 </div>
+  <div class="middle-hint" id="middleHint">+ в чат для участия в прокачке</div>
   <div class="frame-wrap">
   <iframe id="twitch-chat-frame" title="Twitch chat for bib4ek" loading="lazy" allow="clipboard-write"></iframe>
   <div class="chat-overlay" id="chatOverlay"></div>
@@ -473,6 +477,7 @@ function saveFilters(){
   });
   try{localStorage.setItem('bib4ek_filters',JSON.stringify(filterState));}catch(e){}
   renderParticipantsCount();
+  updateMiddleHint();
 }
 
 function userHasRealWin(name){
@@ -550,14 +555,26 @@ var wheelColors=['#2a1a4a','#3d2466','#503080','#634099','#4a2a7a','#5c33a3','#6
 document.getElementById('code').value=code;
 document.getElementById('winnersPick').value=winnersToPick;
 loadFilters();
+updateMiddleHint();
 
-function saveCode(){code=document.getElementById('code').value.trim()||'+';localStorage.setItem('bib4ek_code',code);}
+function saveCode(){code=document.getElementById('code').value.trim()||'+';localStorage.setItem('bib4ek_code',code);updateMiddleHint();}
 function resetParts(){parts.clear();render();renderModal();}
 function openModal(){renderModal();document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function removePart(n){parts.delete(n);render();renderModal();}
 function renderModal(){var q=document.getElementById('search').value.trim().toLowerCase();var base=filterCandidates(Array.from(parts));var arr=base.filter(function(p){return !q||p.toLowerCase().indexOf(q)>=0});var l=document.getElementById('tb-list');l.innerHTML=arr.map(function(p){return'<div class="p"><span>'+esc(p)+'</span><button class="del" data-n="'+esc(p)+'">✕</button></div>';}).join('')||'<div style="color:var(--muted);text-align:center;padding:20px">Пока пусто</div>';document.getElementById('cnt2').textContent=arr.length;}
 function renderParticipantsCount(){var el=document.getElementById('partsCount');if(el)el.textContent=filterCandidates(Array.from(parts)).length;}
+
+function updateMiddleHint(){
+  var h=document.getElementById('middleHint');
+  if(!h)return;
+  if(filterState.ALL){
+    h.innerHTML='<span class="hint-main">Напиши любое сообщение в чат<br>для участия в прокачке</span>';
+  }else{
+    var code=document.getElementById('code').value.trim()||'+';
+    h.innerHTML='<span class="hint-code">'+esc(code)+'</span><span class="hint-main">в чат для участия в прокачке</span>';
+  }
+}
 document.getElementById('tb-list').onclick=function(e){if(e.target&&e.target.classList.contains('del'))removePart(e.target.getAttribute('data-n'));};
 function render(){var c=document.getElementById('cnt');if(c)c.textContent=parts.size;renderParticipantsCount();localStorage.setItem('bib4ek_parts',JSON.stringify(Array.from(parts)));}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
